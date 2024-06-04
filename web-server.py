@@ -12,13 +12,20 @@ global server
 class GetRequestHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
+        pathIsFound = False
         absolutePath = os.getcwd() + os.sep + "resources" + os.sep + self.path.replace("/", "")
-        print("Path requested: ", absolutePath)
-        if os.path.isdir(absolutePath) or os.path.isfile(absolutePath): 
-            if os.path.isdir(absolutePath) and "index.html" in os.listdir(absolutePath):
+
+        if os.path.isdir(absolutePath) : 
+            if os.path.isdir(absolutePath) and "index.htm" in os.listdir(absolutePath):
+                absolutePath = absolutePath + "index.htm"
+                pathIsFound = True
+            elif os.path.isdir(absolutePath) and "index.html" in os.listdir(absolutePath):
                 absolutePath = absolutePath + "index.html"
-            elif os.path.isdir(absolutePath) and "index.htm" in os.listdir(absolutePath):
-                absolutePath = absolutePath + "index.htm"   
+                pathIsFound = True
+        elif os.path.isfile(absolutePath):
+            pathIsFound = True
+            
+        if pathIsFound :
             print("Path found: ", absolutePath)
             self.send_response(200)
             (mime_type, _) = mimetypes.guess_type(absolutePath)
@@ -27,7 +34,7 @@ class GetRequestHandler(http.server.BaseHTTPRequestHandler):
             with open(absolutePath, "rb") as file:
                 self.wfile.write(file.read())
             print("File \"", absolutePath, "\" was found and sent correctly (200)")
-        else :
+        else:
             self.send_error(404)
             print("Error 404: file \"", absolutePath, "\" not found")
 
