@@ -38,7 +38,7 @@ class GetRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_error(404)
             print("Error 404: file \"", absolutePath, "\" not found")
 
-def terminationSignalHandler():
+def terminationSignalHandler(signal, frame):
     print("Exit sequence pressed, closing server")
     try:
         if (server):
@@ -53,6 +53,8 @@ def main():
         port = int(sys.argv[1:])
     server_socket = ('localhost', port)
 
+    signal.signal(signal.SIGINT, terminationSignalHandler)
+
     try:
         server = socketserver.ThreadingTCPServer(server_socket, GetRequestHandler)
         server.allow_reuse_address = True
@@ -63,5 +65,4 @@ def main():
         server.shutdown()
 
 if __name__ == "__main__":
-    http.server
     main()
