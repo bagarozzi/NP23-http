@@ -14,7 +14,7 @@ class GetRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         pathIsFound = False
         absolutePath = os.getcwd() + os.sep + "resources" + os.sep + self.path.replace("/", "")
-
+        absolutePath = absolutePath.split("?")[0]
         if os.path.isdir(absolutePath) : 
             if os.path.isdir(absolutePath) and "index.htm" in os.listdir(absolutePath):
                 absolutePath = absolutePath + "index.htm"
